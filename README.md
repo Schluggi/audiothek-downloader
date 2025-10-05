@@ -41,4 +41,5 @@ Here is the information refactored into a Markdown table:
 | `--url`            | `-u`  | `str`  | -        | Yes      | Insert Audiothek URL (e.g. https://www.ardaudiothek.de/sendung/...) |
 | `--directory`      | `-f`  | `str`  | `output` | No       | Directory to save all MP3s                                          |
 | `--square-images`  | `-s`  | `bool` | `False`  | No       | Download images in 1:1 aspect ratio instead of widescreen           |
+| `--image-width`    | `-w`  | `int`  | 500      | No       | Width of downloaded images                           |
 | `--group-episodes` | `-g`  | `bool` | `False`  | No       | Group episodes into their own subdirectories                        |

@@ -25,6 +25,23 @@ def rename(title: str, program_id: str, kind: str) -> str:
     return title.strip()
 
 
+def download_image(url: str, path: str, filename_base: str):
+    fullname_base = os.path.join(path, filename_base)
+    if not any([os.path.exists(f'{fullname_base}.{ext}') for ext in ['jpg', 'png', 'pic']]):
+        response_image = requests.get(url)
+        image_content = response_image.content
+        if image_content.startswith(b'\xff\xd8'):
+            extension = 'jpg'
+        elif image_content.startswith(b'\x89PNG'):
+            extension = 'png'
+        else:
+            extension = 'pic'
+            print('Warning: Cannot detect image format. Image is saved as *.pic.')
+        fullname = f'{fullname_base}.{extension}'
+        with open(fullname, 'wb') as f:
+            f.write(response_image.content)
+
+
 def download_episodes(core_id: str, directory: str):
     url_type: str = args.url.lower().split(':')[3]
 
@@ -65,7 +82,8 @@ def download_episodes(core_id: str, directory: str):
         else:
             image_attr = 'url'
         
-        title_image_url: str = node.get('image').get(image_attr).replace('{width}', '500')
+        title_image_url: str = node.get('image').get(image_attr).replace('{width}', str(args.image_width))
+        show_image_url: str = node.get('programSet').get('image').get(image_attr).replace('{width}', str(args.image_width))
         mp3_url: str = node.get('audios')[0].get('downloadUrl') or node.get('audios')[0].get('url')
 
         if args.group_episodes:
@@ -80,13 +98,7 @@ def download_episodes(core_id: str, directory: str):
                     print(f'[Error] Couldn\'t create output directory: {e}', file=sys.stderr)
                     continue
 
-            image_file_path: str = os.path.join(show_path, f'{filename}.jpg')
             mp3_file_path: str = os.path.join(show_path, f'{filename}.mp3')
-
-            if not os.path.exists(image_file_path):
-                response_image = requests.get(title_image_url)
-                with open(image_file_path, 'wb') as f:
-                    f.write(response_image.content)
 
             print(f'Download: {i + 1} of {len(nodes)} -> {mp3_file_path}')
 
@@ -97,6 +109,9 @@ def download_episodes(core_id: str, directory: str):
 
                 with open(mp3_file_path, 'wb') as f:
                     f.write(response_mp3.content)
+
+            download_image(title_image_url, show_path, filename)
+            download_image(show_image_url, show_path, show_title)
         else:
             print('No show_id found!', file=sys.stderr)
 
@@ -114,6 +129,8 @@ if __name__ == '__main__':
     )
     parser.add_argument('--square-images', '-s', action='store_true', default=False,
                         help='Download images in aspect ratio 1x1 instead of widescreen')
+    parser.add_argument('--image-width', '-w', type=int, default=500,
+                        help='Width of downloaded images. Default: 500')
     parser.add_argument('--group-episodes', '-g', action='store_true', default=False,
                         help='Group episodes in own sub-directories')
     args = parser.parse_args()
