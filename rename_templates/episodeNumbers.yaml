@@ -1,0 +1,12 @@
+# prettify episode numbers
+# Example: an episode is named "Fairy Tales (1/7)"
+# By default, the file name will look like this: "Fairy Tales (17).mp3"
+# With this template, the file name will look like this: "Fairy Tales (1 of 7).mp3"
+
+fileTemplate:
+  regex: '/'
+  substitution: ' of '
+
+episodeDirectoryTemplate:
+  regex: '/'
+  substitution: ' of '

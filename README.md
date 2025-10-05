@@ -42,3 +42,4 @@ Here is the information refactored into a Markdown table:
 | `--directory`      | `-f`  | `str`  | `output` | No       | Directory to save all MP3s                                          |
 | `--square-images`  | `-s`  | `bool` | `False`  | No       | Download images in 1:1 aspect ratio instead of widescreen           |
 | `--group-episodes` | `-g`  | `bool` | `False`  | No       | Group episodes into their own subdirectories                        |
+| `--template`       | `-t`  | `str`  | show id  | No       | The name of the rename template (try `-t episodeNumbers`)           |

@@ -14,8 +14,10 @@ GRAPHQL_DIR = os.path.join(Path(__file__).parent, 'graphql')
 RENAME_TEMPLATES = os.path.join(Path(__file__).parent, 'rename_templates')
 
 
-def rename(title: str, program_id: str, kind: str) -> str:
-    template_path = os.path.join(RENAME_TEMPLATES, f'{program_id}.yaml')
+def rename(title: str, template: str, kind: str) -> str:
+    if args.template != '':
+        template = sanitize_filename(args.template)
+    template_path = os.path.join(RENAME_TEMPLATES, f'{template}.yaml')
     if os.path.isfile(template_path):
         with open(template_path, 'r') as f:
             template = yaml.safe_load(f)
@@ -116,6 +118,10 @@ if __name__ == '__main__':
                         help='Download images in aspect ratio 1x1 instead of widescreen')
     parser.add_argument('--group-episodes', '-g', action='store_true', default=False,
                         help='Group episodes in own sub-directories')
+    parser.add_argument(
+        '--template', '-t', type=str, default='',
+        help='The name of the rename template, defaults to the show id'
+    )
     args = parser.parse_args()
 
     url_parser = re.search(r'(urn:ard:\w+:\w+)', args.url)
