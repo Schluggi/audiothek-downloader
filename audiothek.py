@@ -58,7 +58,7 @@ def download_episodes(core_id: str, directory: str):
 
         filename: str = rename(item_title, show_id, 'fileTemplate')
         show_title: str = rename(node.get('programSet').get('title'), show_id, 'showTemplate')
-        show_path: str = os.path.join(directory, rename(show_title, show_id, 'showTemplate'))
+        show_path: str = os.path.join(directory, show_title)
 
         if args.square_images:
             image_attr = 'url1X1'
