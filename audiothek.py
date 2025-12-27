@@ -14,6 +14,9 @@ GRAPHQL_DIR = os.path.join(Path(__file__).parent, 'graphql')
 RENAME_TEMPLATES = os.path.join(Path(__file__).parent, 'rename_templates')
 
 
+def get_publishDate(node):
+    return node.get("publishDate").split("T")[0]
+
 def rename(title: str, program_id: str, kind: str) -> str:
     template_path = os.path.join(RENAME_TEMPLATES, f'{program_id}.yaml')
     if os.path.isfile(template_path):
@@ -52,11 +55,16 @@ def download_episodes(core_id: str, directory: str):
     else:
         nodes: list = response_json.get('data').get('result').get('items').get('nodes')
 
+    nodes.sort(key=get_publishDate)
+
+    counter = 0
+
     for i, node in enumerate(nodes):
         show_id: str = node.get('programSet').get('id')
         item_title: str = node.get('title')
+        counter += 1
 
-        filename: str = rename(item_title, show_id, 'fileTemplate')
+        filename: str = str(counter) + "_" + rename(item_title, show_id, 'fileTemplate')
         show_title: str = rename(node.get('programSet').get('title'), show_id, 'showTemplate')
         show_path: str = os.path.join(directory, rename(show_title, show_id, 'showTemplate'))
 
